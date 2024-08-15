@@ -1,0 +1,6 @@
+[submodule "external/boost"]
+	path = external/boost
+	url = https://github.com/callsvc/boost.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git
