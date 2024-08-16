@@ -5,7 +5,6 @@
 #include <cfg/global.h>
 namespace mizui::core {
     namespace po = boost::program_options;
-
     class Application {
     public:
         Application() = default;
@@ -17,7 +16,6 @@ namespace mizui::core {
         static void takeGrass();
     private:
         void processOptions(const std::vector<char*>& args);
-
         std::unique_ptr<cfg::Global> config;
     };
 }

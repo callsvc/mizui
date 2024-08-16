@@ -13,10 +13,11 @@ namespace mizui::core {
         validatePath(games);
 
         collection = GamesPaths(games);
+        collection.populate();
     }
 
     void AssetsManager::validatePath(const vfs::Path& path) const {
-        const std::filesystem::path stdPath{path};
+        const std::filesystem::path& stdPath{path};
         if (stdPath.parent_path() != std::filesystem::path{root}) {
             throw std::runtime_error("Parent directory does not exists");
         }

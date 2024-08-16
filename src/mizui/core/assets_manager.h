@@ -1,7 +1,13 @@
 #pragma once
 
 #include <core/games_paths.h>
+#include <decl.h>
 namespace mizui::core {
+    struct NxEntry {
+        std::string title;
+        std::vector<u8> icon;
+    };
+
     class AssetsManager {
     public:
         AssetsManager() = default;
@@ -15,5 +21,6 @@ namespace mizui::core {
         void validatePath(const vfs::Path& path) const;
 
         GamesPaths collection;
+        std::vector<NxEntry> playable;
     };
 }

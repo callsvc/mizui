@@ -12,16 +12,16 @@ namespace mizui::vfs {
         explicit operator std::string() const {
             return osPath;
         }
-        explicit operator std::filesystem::path() const {
+        explicit operator const std::filesystem::path&() const {
             return osPath;
         }
-        Path operator/(const std::string& path) const {
-            return Path{osPath + "/" + path};
+        Path operator / (const std::string& path) const {
+            return Path{osPath.string() + "/" + path};
         }
         explicit operator bool() const {
             return !osPath.empty();
         }
     private:
-        std::string osPath;
+        std::filesystem::path osPath;
     };
 }
