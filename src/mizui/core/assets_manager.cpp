@@ -1,3 +1,4 @@
+#include <ranges>
 #include <core/assets_manager.h>
 
 namespace mizui::core {
@@ -14,6 +15,12 @@ namespace mizui::core {
 
         collection = GamesPaths(games);
         collection.populate();
+
+        const auto& every{collection.readable};
+        for (const auto& [idx, path] :
+            std::views::enumerate(every)) {
+            playable.emplace_back(idx);
+        }
     }
 
     void AssetsManager::validatePath(const vfs::Path& path) const {

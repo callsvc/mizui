@@ -12,7 +12,8 @@ namespace mizui::core {
         if (!rootDir) {
             rootDir = std::filesystem::current_path();
         }
-        const auto root{std::filesystem::path(rootDir)};
+
+        const std::filesystem::path& root{rootDir};
         if (!exists(root)) {
             create_directory(root);
         }

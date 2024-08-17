@@ -3,7 +3,8 @@
 #include <core/games_paths.h>
 #include <decl.h>
 namespace mizui::core {
-    struct NxEntry {
+    struct NxApplication {
+        u64 playId;
         std::string title;
         std::vector<u8> icon;
     };
@@ -21,6 +22,6 @@ namespace mizui::core {
         void validatePath(const vfs::Path& path) const;
 
         GamesPaths collection;
-        std::vector<NxEntry> playable;
+        std::vector<NxApplication> playable;
     };
 }

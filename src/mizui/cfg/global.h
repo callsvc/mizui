@@ -7,7 +7,7 @@ namespace mizui::cfg {
     public:
         Global() = default;
         ~Global();
-        explicit Global(const vfs::Path& yaml);
+        Global(const vfs::Path& yaml);
     private:
         std::fstream yamlFile;
         Yaml global;

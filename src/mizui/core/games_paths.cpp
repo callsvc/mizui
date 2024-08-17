@@ -28,9 +28,9 @@ namespace mizui::core {
                 readable.emplace_back(entry.path());
             }
         };
-        for (const auto& gamePath : searchPaths) {
-            const std::filesystem::path& path(gamePath);
-            searchForGames(path);
+        for (const auto& gamesPath : searchPaths) {
+            const std::filesystem::path& directory{gamesPath};
+            searchForGames(directory);
         }
     }
 }

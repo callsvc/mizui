@@ -7,7 +7,6 @@ namespace mizui::core {
     namespace po = boost::program_options;
     class Application {
     public:
-        Application() = default;
         void initialize(const std::vector<char*> &args);
 
         AssetsManager assets;

@@ -9,8 +9,8 @@ namespace mizui::core {
         explicit GamesPaths(const vfs::Path& common);
 
         void populate();
+        std::vector<vfs::Path> readable;
     private:
         std::vector<vfs::Path> searchPaths;
-        std::vector<vfs::Path> readable;
     };
 }
