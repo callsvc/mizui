@@ -1,6 +1,6 @@
-#include <cfg/global.h>
+#include <conf/global.h>
 
-namespace mizui::cfg {
+namespace mizui::conf {
     Global::~Global() {
         if (yamlFile.is_open())
             yamlFile.close();

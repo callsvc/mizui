@@ -9,10 +9,13 @@ target_sources(mizui PUBLIC
     core/assets_manager.h
     core/games_paths.cpp
     core/games_paths.h
-    cfg/global.cpp
-    cfg/global.h
-    cfg/yaml.cpp
-    cfg/yaml.h
+    hle/virtual_nx.cpp
+    hle/virtual_nx.h
+    hle/application.h
+    conf/global.cpp
+    conf/global.h
+    conf/yaml.cpp
+    conf/yaml.h
     vfs/path.h
 )
 

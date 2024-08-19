@@ -9,6 +9,6 @@ int main(const mizui::i32 argc, char** argv) {
     }
     app.initialize(args);
 
-    app.takeGrass();
+    app.halt();
     return {};
 }

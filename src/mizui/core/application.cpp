@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <core/application.h>
 namespace mizui::core {
     po::options_description commands{"Mizui options"};
@@ -17,11 +18,13 @@ namespace mizui::core {
         if (!exists(root)) {
             create_directory(root);
         }
-        config = std::make_unique<cfg::Global>(rootDir / "mizui.yaml");
-
+        config = conf::Global(rootDir / "mizui.yaml");
         assets.initialize(rootDir);
+
+        const auto& executables{assets.collection.readable};
+        sw.stockEveryExecutable(executables);
     }
-    void Application::takeGrass() {
+    void Application::halt() {
         std::cin.clear();
         std::cin.ignore();
         std::cin.get();
@@ -36,7 +39,7 @@ namespace mizui::core {
             rootDir = vm["root-dir"].as<std::string>();
         if (vm.contains("help")) {
             commands.print(std::cout, 0);
-            takeGrass();
+            halt();
         }
     }
 }

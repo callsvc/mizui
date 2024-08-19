@@ -2,19 +2,21 @@
 #include <boost/program_options.hpp>
 
 #include <core/assets_manager.h>
-#include <cfg/global.h>
+#include <hle/virtual_nx.h>
+#include <conf/global.h>
 namespace mizui::core {
     namespace po = boost::program_options;
     class Application {
     public:
-        void initialize(const std::vector<char*> &args);
+        void initialize(const std::vector<char*>& args);
 
         AssetsManager assets;
         vfs::Path rootDir;
-
-        static void takeGrass();
+        static void halt();
     private:
         void processOptions(const std::vector<char*>& args);
-        std::unique_ptr<cfg::Global> config;
+        conf::Global config;
+
+        hle::VirtualNx sw;
     };
 }

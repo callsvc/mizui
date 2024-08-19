@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 
-namespace mizui::cfg {
+namespace mizui::conf {
 
     struct Pair {
         std::string key;
