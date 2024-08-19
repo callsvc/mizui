@@ -9,9 +9,12 @@ namespace mizui::core {
             ("help", "display the table of commands available to the user")
             ("root-dir", po::value<std::string>(), "change the default root directory to the one chosen by the user");
         processOptions(args);
-
         if (!rootDir) {
+#if defined(MIZUI_USE_TEMP_DIR_AS_ROOT)
+            rootDir = std::filesystem::temp_directory_path() / "Mizui";
+#else
             rootDir = std::filesystem::current_path();
+#endif
         }
 
         const std::filesystem::path& root{rootDir};
