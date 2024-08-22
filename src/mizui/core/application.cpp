@@ -6,8 +6,10 @@ namespace mizui::core {
 
     void Application::initialize(const std::vector<char*>& args) {
         commands.add_options()
-            ("help", "display the table of commands available to the user")
-            ("root-dir", po::value<std::string>(), "change the default root directory to the one chosen by the user");
+            ("help",
+                "display the table of commands available to the user")
+            ("root-dir", po::value<std::string>(),
+                "change the default root directory to the one chosen by the user");
         processOptions(args);
         if (!rootDir) {
 #if defined(MIZUI_USE_TEMP_DIR_AS_ROOT)
@@ -41,7 +43,7 @@ namespace mizui::core {
         if (vm.contains("root-dir"))
             rootDir = vm["root-dir"].as<std::string>();
         if (vm.contains("help")) {
-            commands.print(std::cout, 0);
+            commands.print(std::cout);
             halt();
         }
     }
