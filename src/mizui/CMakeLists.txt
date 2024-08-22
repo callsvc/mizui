@@ -12,10 +12,13 @@ target_sources(mizui PUBLIC
     hle/virtual_nx.cpp
     hle/virtual_nx.h
     hle/application.h
+    hle/executable.h
     conf/global.cpp
     conf/global.h
     conf/yaml.cpp
     conf/yaml.h
+    vfs/mappable.cpp
+    vfs/mappable.h
     vfs/path.h
 )
 

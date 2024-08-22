@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <decl.h>
+#include <vfs/path.h>
 namespace mizui::hle {
     struct Application {
         u64 playId;
@@ -12,5 +13,4 @@ namespace mizui::hle {
         std::string title;
         std::vector<u8> icon;
     };
-
 }

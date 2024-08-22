@@ -12,6 +12,8 @@ namespace mizui::core {
 
         AssetsManager assets;
         vfs::Path rootDir;
+        void loadApplication(u64 playId);
+
         static void halt();
     private:
         void processOptions(const std::vector<char*>& args);

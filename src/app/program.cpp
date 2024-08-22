@@ -8,6 +8,7 @@ int main(const mizui::i32 argc, char** argv) {
         args.push_back(argv[arg]);
     }
     app.initialize(args);
+    app.loadApplication(1);
 
     app.halt();
     return {};

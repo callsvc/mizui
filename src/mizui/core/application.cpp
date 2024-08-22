@@ -29,6 +29,26 @@ namespace mizui::core {
         const auto& executables{assets.collection.readable};
         sw.stockEveryExecutable(executables);
     }
+
+    void Application::loadApplication(const u64 playId) {
+        auto playIt{std::begin(sw.playable)};
+        std::advance(playIt, playId);
+
+        if (playIt == sw.playable.end())
+            return;
+
+        const std::filesystem::path& path{playIt->ios};
+        std::fstream io{path};
+        std::vector<char> version(6);
+        io.read(&version[0], version.size());
+
+        if (std::string_view(&version[0], 6).find("NSO") !=
+            std::string_view::npos) {
+            if (!sw.loadNso(std::move(io)))
+                throw std::runtime_error("Failed to load NSO");
+        }
+    }
+
     void Application::halt() {
         std::cin.clear();
         std::cin.ignore();

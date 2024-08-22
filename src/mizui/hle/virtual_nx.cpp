@@ -27,4 +27,9 @@ namespace mizui::hle {
                 playable.emplace_back(idx, ioStatus.st_ino, path);
         }
     }
+
+    bool VirtualNx::loadNso(std::fstream&& handle) {
+        program = Executable(std::move(handle));
+        return true;
+    }
 }
