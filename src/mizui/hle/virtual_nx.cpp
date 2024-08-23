@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include <exe/nso/nso.h>
 #include <hle/virtual_nx.h>
 namespace mizui::hle {
     void VirtualNx::stockEveryExecutable(const std::vector<vfs::Path>& executables) {
@@ -27,9 +28,8 @@ namespace mizui::hle {
                 playable.emplace_back(idx, ioStatus.st_ino, path);
         }
     }
-
     bool VirtualNx::loadNso(std::fstream&& handle) {
-        program = Executable(std::move(handle));
+        program = std::make_unique<exe::nso::Nso>(std::move(handle));
         return true;
     }
 }

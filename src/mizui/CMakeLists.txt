@@ -12,7 +12,12 @@ target_sources(mizui PUBLIC
     hle/virtual_nx.cpp
     hle/virtual_nx.h
     hle/application.h
-    hle/executable.h
+    exe/rofs.cpp
+    exe/rofs.h
+    exe/executable.cpp
+    exe/executable.h
+    exe/nso/nso.cpp
+    exe/nso/nso.h
     conf/global.cpp
     conf/global.h
     conf/yaml.cpp

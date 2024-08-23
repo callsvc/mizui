@@ -3,7 +3,7 @@
 #include <vfs/path.h>
 
 #include <hle/application.h>
-#include <hle/executable.h>
+#include <exe/executable.h>
 namespace mizui::hle {
     class VirtualNx {
     public:
@@ -12,6 +12,6 @@ namespace mizui::hle {
         bool loadNso(std::fstream&& handle);
         std::vector<Application> playable;
 
-        Executable program;
+        std::unique_ptr<exe::Executable> program;
     };
 }
