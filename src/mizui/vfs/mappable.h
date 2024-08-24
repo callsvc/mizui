@@ -1,6 +1,4 @@
 #pragma once
-#include <fstream>
-
 #include <decl.h>
 namespace mizui::vfs {
     class Mappable {
@@ -9,11 +7,19 @@ namespace mizui::vfs {
         Mappable(std::fstream& io);
 
         explicit operator bool() const;
+        template <typename T> requires (
+            !std::is_same_v<T, std::span<u8>> &&
+            std::is_trivially_copyable_v<T>)
+        auto read(T& output) {
+            // ReSharper disable once CppLocalVariableMayBeConst
+            std::span data(reinterpret_cast<u8*>(&output), sizeof(T));
+            return read(data);
+        }
+        u64 read(std::span<u8> output, u64 offset = 0) const;
 
-        u64 read{};
-        u64 write{};
-#if defined(__linux__)
+        u64 rdPos{};
+        u64 wrPos{};
+
         i32 descriptor{};
-#endif
     };
 }

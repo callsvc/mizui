@@ -12,5 +12,5 @@ target_sources(orizonti PUBLIC
     os.cpp
     os.h
 )
-target_link_libraries(orizonti PUBLIC include)
+target_link_libraries(orizonti PUBLIC mizui_interface)
 

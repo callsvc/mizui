@@ -30,6 +30,10 @@ namespace mizui::hle {
     }
     bool VirtualNx::loadNso(std::fstream&& handle) {
         program = std::make_unique<exe::nso::Nso>(std::move(handle));
+        if (!program->sanitizeInputIo()) {
+            return {};
+        }
+        program->loadExecutable();
         return true;
     }
 }

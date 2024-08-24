@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fstream>
 #include <vector>
 #include <ranges>
 
@@ -8,8 +9,8 @@
 #include <vfs/mappable.h>
 namespace mizui::vfs {
     Mappable::Mappable(std::fstream& io) {
-        read = io.tellg();
-        write = io.tellp();
+        rdPos = io.tellg();
+        wrPos = io.tellp();
 
         io.seekg(0, std::ios::beg);
         std::vector<char> testBytes(100);
@@ -40,11 +41,27 @@ namespace mizui::vfs {
             break;
         }
 
-        io.seekg(read);
-        io.seekp(write);
+        io.seekg(rdPos);
+        io.seekp(wrPos);
     }
 
     Mappable::operator bool() const {
         return descriptor > 3;
+    }
+
+    u64 Mappable::read(const std::span<u8> output, u64 offset) const {
+        constexpr auto bufferingSize{4096};
+        u64 readSize{bufferingSize};
+
+        decltype(offset) buffPos{};
+        do {
+            const auto red{output.size() - buffPos};
+            if (red < readSize)
+                readSize = red;
+            ::pread64(descriptor, &output[buffPos], readSize, offset);
+
+            buffPos += readSize;
+        } while (buffPos < output.size());
+        return buffPos;
     }
 }

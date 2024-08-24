@@ -12,8 +12,6 @@ target_sources(mizui PUBLIC
     hle/virtual_nx.cpp
     hle/virtual_nx.h
     hle/application.h
-    exe/rofs.cpp
-    exe/rofs.h
     exe/executable.cpp
     exe/executable.h
     exe/nso/nso.cpp
@@ -28,4 +26,4 @@ target_sources(mizui PUBLIC
 )
 
 add_subdirectory(orizonti)
-target_link_libraries(mizui PUBLIC orizonti fmt Boost::program_options Boost::algorithm)
+target_link_libraries(mizui PUBLIC mizui_interface orizonti Boost::program_options Boost::algorithm)
