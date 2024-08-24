@@ -4,9 +4,9 @@
 #include <vector>
 #include <vfs/mappable.h>
 namespace mizui::exe {
-    enum Formats {
-        FmtUnrecognized,
-        FmtNso
+    enum ExecutableFormat {
+        Unrecognized,
+        Nso
     };
     enum HeadersSz {
         SizeNso = 0xe0 + 0x20
@@ -22,7 +22,7 @@ namespace mizui::exe {
         Executable(std::fstream&& passport);
         virtual ~Executable() = default;
 
-        virtual bool sanitizeInputIo() = 0;
+        virtual ExecutableFormat checkExecutableType() = 0;
         virtual void loadExecutable() = 0;
 
         vfs::Mappable backing;

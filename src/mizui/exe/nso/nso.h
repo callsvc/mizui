@@ -35,7 +35,7 @@ namespace mizui::exe::nso {
     public:
         Nso(std::fstream&& os) : Executable(std::move(os)) {
         }
-        bool sanitizeInputIo() override;
+        ExecutableFormat checkExecutableType() override;
         void loadExecutable() override;
 
         NsoHeader header{};

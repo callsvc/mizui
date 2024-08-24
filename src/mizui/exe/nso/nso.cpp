@@ -8,8 +8,27 @@
 
 #include <exe/nso/nso.h>
 namespace mizui::exe::nso {
-    bool Nso::sanitizeInputIo() {
-        return true;
+    auto makeMagic(const std::string_view& number) {
+        u64 value{};
+        constexpr u32 zeroes{4};
+        if (number.size() <= 4) {
+            std::memcpy(&value, &number[0], number.size());
+        }
+        for (decltype(value) leading{}; leading < zeroes - number.size(); leading++)
+            value <<= 8;
+
+        return value;
+    }
+
+    ExecutableFormat Nso::checkExecutableType() {
+        u32 magic{};
+        if (backing.readSome(magic) != sizeof(magic))
+            return Unrecognized;
+        if (magic != makeMagic("NSO0")) {
+            return Unrecognized;
+        }
+
+        return ExecutableFormat::Nso;
     }
 
     void Nso::printRoSectionInfo() {
@@ -69,32 +88,35 @@ namespace mizui::exe::nso {
     }
 
     void Nso::readSegmentImpl(const std::span<u8> section, const u32 fileOffset, const u32 compressed, const bool isCompressed, const bool checkHash) {
-        u32 decompress{};
-        if (isCompressed)
-            decompress = compressed;
-
-        if (decompress) {
-            std::vector<u8> compressedChunk(compressed);
-            if (backing.read(compressedChunk, fileOffset) != fileOffset) {
-            }
-            LZ4_decompress_safe(
-                reinterpret_cast<char*>(&compressedChunk[0]),
-                reinterpret_cast<char*>(&section[0]),
-                decompress, section.size());
-        } else {
-            if (backing.read(section, fileOffset) != fileOffset) {
-            }
+        std::vector<u8> compressedChunk;
+        std::span readBuffer{section};
+        if (isCompressed) {
+            compressedChunk.resize(compressed);
         }
 
+        if (!compressedChunk.empty())
+            readBuffer = std::span(compressedChunk);
+        if (backing.readSome(readBuffer, fileOffset) != readBuffer.size()) {
+            throw std::runtime_error("Failed to read some data");
+        }
+        if (&compressedChunk[0] != &section[0]) {
+            const std::span decompress{reinterpret_cast<char*>(&readBuffer[0]), readBuffer.size()};
+            const std::span output{reinterpret_cast<char*>(&section[0]), section.size()};
+
+            if (LZ4_decompress_safe(&decompress[0], &output[0], decompress.size(), output.size()) < 1) {
+                throw std::runtime_error("LZ4_decompress_safe failed");
+            }
+        }
         if (checkHash) {
         }
     }
 
     void Nso::loadExecutable() {
-        backing.read(header);
+        backing.readSome(header);
 
         std::memcpy(&pumpkin[0], &header, sizeof(header));
         if (header.version != 0) {
+            throw std::runtime_error("Unknown version");
         }
 
         const auto requiredSegmentSz{

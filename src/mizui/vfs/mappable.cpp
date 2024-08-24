@@ -49,7 +49,7 @@ namespace mizui::vfs {
         return descriptor > 3;
     }
 
-    u64 Mappable::read(const std::span<u8> output, u64 offset) const {
+    u64 Mappable::readSome(const std::span<u8> output, u64 offset) const {
         constexpr auto bufferingSize{4096};
         u64 readSize{bufferingSize};
 
@@ -58,7 +58,8 @@ namespace mizui::vfs {
             const auto red{output.size() - buffPos};
             if (red < readSize)
                 readSize = red;
-            ::pread64(descriptor, &output[buffPos], readSize, offset);
+            if (::pread64(descriptor, &output[buffPos], readSize, offset) < 1) {
+            }
 
             buffPos += readSize;
         } while (buffPos < output.size());

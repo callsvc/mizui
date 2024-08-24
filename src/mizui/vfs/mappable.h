@@ -8,14 +8,13 @@ namespace mizui::vfs {
 
         explicit operator bool() const;
         template <typename T> requires (
-            !std::is_same_v<T, std::span<u8>> &&
-            std::is_trivially_copyable_v<T>)
-        auto read(T& output) {
+            !std::is_same_v<T, std::span<u8>> && std::is_trivially_copyable_v<T>)
+        auto readSome(T& output) {
             // ReSharper disable once CppLocalVariableMayBeConst
             std::span data(reinterpret_cast<u8*>(&output), sizeof(T));
-            return read(data);
+            return readSome(data);
         }
-        u64 read(std::span<u8> output, u64 offset = 0) const;
+        u64 readSome(std::span<u8> output, u64 offset = 0) const;
 
         u64 rdPos{};
         u64 wrPos{};
