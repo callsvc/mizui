@@ -44,8 +44,13 @@ namespace mizui::core {
 
         if (std::string_view(&version[0], 6).find("NSO") !=
             std::string_view::npos) {
-            if (!sw.loadNso(std::move(io)))
-                throw std::runtime_error("Failed to load NSO");
+            sw.loadExecutable(exe::Nso, std::move(io));
+            return true;
+        }
+        if (std::string_view(&version[0], 6).find("PFS0") !=
+            std::string_view::npos) {
+            sw.loadExecutable(exe::Nsp, std::move(io));
+
             return true;
         }
         return {};

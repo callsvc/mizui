@@ -9,7 +9,7 @@ namespace mizui::hle {
     public:
         VirtualNx() = default;
         void stockEveryExecutable(const std::vector<vfs::Path>& executables);
-        bool loadNso(std::fstream&& handle);
+        bool loadExecutable(exe::ExecutableFormat format, std::fstream&& handle);
         std::vector<Application> playable;
 
         std::unique_ptr<exe::Executable> program;

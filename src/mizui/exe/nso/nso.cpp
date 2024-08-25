@@ -116,8 +116,6 @@ namespace mizui::exe::nso {
 
     void Nso::loadExecutable() {
         backing.readSome(header);
-
-        std::memcpy(&pumpkin[0], &header, sizeof(header));
         if (header.version != 0) {
             throw std::runtime_error("Unknown version");
         }

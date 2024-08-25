@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include <exe/nso/nso.h>
+#include <exe/nsp/nsp.h>
 #include <hle/virtual_nx.h>
 namespace mizui::hle {
     void VirtualNx::stockEveryExecutable(const std::vector<vfs::Path>& executables) {
@@ -28,8 +29,16 @@ namespace mizui::hle {
                 playable.emplace_back(idx, ioStatus.st_ino, path);
         }
     }
-    bool VirtualNx::loadNso(std::fstream&& handle) {
-        program = std::make_unique<exe::nso::Nso>(std::move(handle));
+    bool VirtualNx::loadExecutable(const exe::ExecutableFormat format, std::fstream&& handle) {
+        auto loadProgram = [&] -> std::unique_ptr<exe::Executable> {
+            if (format == exe::Nso)
+                return std::make_unique<exe::nso::Nso>(std::move(handle));
+            return std::make_unique<exe::nsp::Nsp>(std::move(handle));
+        };
+
+        program = loadProgram();
+        if (!program)
+            return {};
         if (!program->checkExecutableType()) {
             return {};
         }

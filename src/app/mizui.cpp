@@ -12,8 +12,9 @@ int main(const mizui::i32 argc, char** argv) {
 
     for (const auto& game : collectedGames) {
         const std::filesystem::path& gamePath{game.path};
-        if (gamePath.extension() == "nsp") {
-            app.loadApplication(game.associatedId);
+        if (gamePath.extension() == ".nsp") {
+            if (app.loadApplication(game.associatedId))
+                break;
         }
     }
 

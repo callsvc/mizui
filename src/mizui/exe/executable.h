@@ -6,7 +6,8 @@
 namespace mizui::exe {
     enum ExecutableFormat {
         Unrecognized,
-        Nso
+        Nso,
+        Nsp
     };
     enum HeadersSz {
         SizeNso = 0xe0 + 0x20
@@ -32,7 +33,6 @@ namespace mizui::exe {
         std::span<u8> roSegment;
         std::span<u8> dataSegment;
     protected:
-        std::vector<u8> pumpkin;
         virtual void readSegmentImpl(std::span<u8> section, u32 fileOffset, u32 compressed, bool isCompressed, bool checkHash) = 0;
 
     private:
