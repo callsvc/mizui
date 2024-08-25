@@ -55,13 +55,15 @@ namespace mizui::vfs {
 
         decltype(offset) buffPos{};
         do {
-            const auto red{output.size() - buffPos};
-            if (red < readSize)
-                readSize = red;
-            if (::pread64(descriptor, &output[buffPos], readSize, offset) < 1) {
+            const auto fence{output.size() - buffPos};
+            if (fence < readSize)
+                readSize = fence;
+            decltype(buffPos) result;
+            if ((result = ::pread64(descriptor, &output[buffPos], readSize, offset + buffPos)) < 1) {
+                throw std::runtime_error("Could not read the file");
             }
 
-            buffPos += readSize;
+            buffPos += result;
         } while (buffPos < output.size());
         return buffPos;
     }

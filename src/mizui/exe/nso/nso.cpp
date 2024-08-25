@@ -19,7 +19,6 @@ namespace mizui::exe::nso {
 
         return value;
     }
-
     ExecutableFormat Nso::checkExecutableType() {
         u32 magic{};
         if (backing.readSome(magic) != sizeof(magic))
@@ -35,16 +34,16 @@ namespace mizui::exe::nso {
         std::stringstream output;
         std::string modulePath;
         const std::string content{reinterpret_cast<char*>(&roSegment[0]), roSegment.size()};
-        if (std::memcmp(&content[0], "\\0\\0\\0\\0", 4)) {
+        if (std::memcmp(&content[0], "\\0\\0\\0\\0", 4) == 0) {
             u32 length;
             std::memcpy(&length, &content[4], 4);
             if (length)
                 modulePath = content.substr(8, length);
         }
 
-        const boost::regex module{""};
-        const boost::regex fsSdk{""};
-        const boost::regex sdkLibraries{""};
+        const boost::regex module{"[a-z]:[\\/][ -~]{5,}\\.nss"};
+        const boost::regex fsSdk{"sdk_version: ([0-9.]*)"};
+        const boost::regex sdkLibraries{"SDK MW[ -~]*"};
 
         if (modulePath.empty()) {
             boost::smatch match;
@@ -53,7 +52,8 @@ namespace mizui::exe::nso {
             }
         }
         boost::smatch match;
-        output << fmt::format("Module {}\n", modulePath);
+        if (modulePath.size())
+            output << fmt::format("Module {}\n", modulePath);
         if (regex_search(content, match, fsSdk)) {
             output << fmt::format("FS SDK {}\n", match.str());
         }
@@ -72,19 +72,22 @@ namespace mizui::exe::nso {
     }
 
     void Nso::decompressSegment(const SegmentType segment, const u32 offset) {
-        auto& decompress{textSegment};
+        auto& decompress = [&]() -> std::span<u8>& {
+            if (segment == Text)
+                return textSegment;
+            if (segment == RoData)
+                return roSegment;
+            return dataSegment;
+        }();
 
-        if (segment == RoData)
-            decompress = roSegment;
-        else if (segment == Data)
-            decompress = dataSegment;
+        const auto fileOffset{header.segments[segment].offset};
+        const auto segmentSize{header.segmentsSize[segment]};
+        const auto decompressedSize{header.segments[segment].decompressed};
+        const auto compressed{header.flags >> static_cast<u32>(segment) & 1};
+        const auto sanitize{header.flags >> static_cast<u32>(segment) & 8};
 
-        const auto segmentSize{header.segments[segment].decompressed};
-        const auto compressed{(header.flags >> static_cast<u32>(segment)) & 1};
-        const auto sanitize{(header.flags >> static_cast<u32>(segment)) & 8};
-
-        decompress = {&regions[offset], segmentSize};
-        readSegmentImpl(decompress, header.segments[segment].offset, header.segmentsSize[segment], compressed, sanitize);
+        decompress = {&regions[offset], decompressedSize};
+        readSegmentImpl(decompress, fileOffset, segmentSize, compressed, sanitize);
     }
 
     void Nso::readSegmentImpl(const std::span<u8> section, const u32 fileOffset, const u32 compressed, const bool isCompressed, const bool checkHash) {
@@ -92,18 +95,18 @@ namespace mizui::exe::nso {
         std::span readBuffer{section};
         if (isCompressed) {
             compressedChunk.resize(compressed);
+            readBuffer = std::span(compressedChunk);
         }
 
-        if (!compressedChunk.empty())
-            readBuffer = std::span(compressedChunk);
         if (backing.readSome(readBuffer, fileOffset) != readBuffer.size()) {
             throw std::runtime_error("Failed to read some data");
         }
-        if (&compressedChunk[0] != &section[0]) {
+        if (&readBuffer[0] != &section[0]) {
             const std::span decompress{reinterpret_cast<char*>(&readBuffer[0]), readBuffer.size()};
             const std::span output{reinterpret_cast<char*>(&section[0]), section.size()};
 
-            if (LZ4_decompress_safe(&decompress[0], &output[0], decompress.size(), output.size()) < 1) {
+            const auto result{LZ4_decompress_safe(&decompress[0], &output[0], decompress.size(), output.size())};
+            if (result != output.size()) {
                 throw std::runtime_error("LZ4_decompress_safe failed");
             }
         }
@@ -119,15 +122,14 @@ namespace mizui::exe::nso {
             throw std::runtime_error("Unknown version");
         }
 
-        const auto requiredSegmentSz{
-            header.segments[2].memoryOffset + header.segments[2].decompressed};
-        regions.resize(requiredSegmentSz);
+        const auto requiredSize{header.segments[2].memoryOffset + header.segments[2].decompressed};
+        regions.resize(requiredSize);
 
         const auto textOffset{header.segments[0].memoryOffset};
         decompressSegment(Text, textOffset);
         const auto roOffset{header.segments[1].memoryOffset};
         decompressSegment(RoData, roOffset);
-        const auto dataOffset{header.segments[1].memoryOffset};
+        const auto dataOffset{header.segments[2].memoryOffset};
         decompressSegment(Data, dataOffset);
 
         printRoSectionInfo();

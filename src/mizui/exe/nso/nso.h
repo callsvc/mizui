@@ -1,7 +1,6 @@
 #pragma once
 
 #include <exe/executable.h>
-#include <decl.h>
 namespace mizui::exe::nso {
     struct SegmentHeader {
         u32 offset, memoryOffset;
@@ -31,6 +30,7 @@ namespace mizui::exe::nso {
     static_assert(sizeof(NsoHeader) == SizeNso);
     static_assert(std::is_trivially_copyable_v<NsoHeader>);
 
+    // NSO is the main executable format
     class Nso final : public Executable {
     public:
         Nso(std::fstream&& os) : Executable(std::move(os)) {
