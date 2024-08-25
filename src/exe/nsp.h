@@ -1,7 +1,7 @@
 #pragma once
 #include <exe/executable.h>
 
-namespace mizui::exe::nsp {
+namespace mizui::exe {
     struct NspHeader {
         u32 magic;
         u32 entryCount;

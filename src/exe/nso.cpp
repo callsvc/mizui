@@ -6,25 +6,15 @@
 #include <fmt/format.h>
 #include <lz4.h>
 
-#include <exe/nso/nso.h>
-namespace mizui::exe::nso {
-    auto makeMagic(const std::string_view& number) {
-        u64 value{};
-        constexpr u32 zeroes{4};
-        if (number.size() <= 4) {
-            std::memcpy(&value, &number[0], number.size());
-        }
-        for (decltype(value) leading{}; leading < zeroes - number.size(); leading++)
-            value <<= 8;
-
-        return value;
-    }
+#include <magic.h>
+#include <exe/nso.h>
+namespace mizui::exe {
     ExecutableFormat Nso::checkExecutableType() {
         u32 magic{};
         if (backing.readSome(magic) != sizeof(magic))
-            return Unrecognized;
+            return ExecutableFormat::Unrecognized;
         if (magic != makeMagic("NSO0")) {
-            return Unrecognized;
+            return ExecutableFormat::Unrecognized;
         }
 
         return ExecutableFormat::Nso;

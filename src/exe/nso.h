@@ -1,7 +1,7 @@
 #pragma once
 
 #include <exe/executable.h>
-namespace mizui::exe::nso {
+namespace mizui::exe {
     struct SegmentHeader {
         u32 offset, memoryOffset;
         u32 decompressed;

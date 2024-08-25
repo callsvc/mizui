@@ -1,6 +1,6 @@
-#include <exe/nsp/nsp.h>
+#include <exe/nsp.h>
 
-namespace mizui::exe::nsp {
+namespace mizui::exe {
     ExecutableFormat Nsp::checkExecutableType() {
         return ExecutableFormat::Nsp;
     }

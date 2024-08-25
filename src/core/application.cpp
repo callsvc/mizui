@@ -44,12 +44,12 @@ namespace mizui::core {
 
         if (std::string_view(&version[0], 6).find("NSO") !=
             std::string_view::npos) {
-            sw.loadExecutable(exe::Nso, std::move(io));
+            sw.loadExecutable(exe::ExecutableFormat::Nso, std::move(io));
             return true;
         }
         if (std::string_view(&version[0], 6).find("PFS0") !=
             std::string_view::npos) {
-            sw.loadExecutable(exe::Nsp, std::move(io));
+            sw.loadExecutable(exe::ExecutableFormat::Nsp, std::move(io));
 
             return true;
         }

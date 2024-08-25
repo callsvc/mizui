@@ -4,7 +4,7 @@
 #include <vector>
 #include <vfs/mappable.h>
 namespace mizui::exe {
-    enum ExecutableFormat {
+    enum class ExecutableFormat {
         Unrecognized,
         Nso,
         Nsp
