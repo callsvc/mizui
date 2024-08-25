@@ -8,7 +8,14 @@ int main(const mizui::i32 argc, char** argv) {
         args.push_back(argv[arg]);
     }
     app.initialize(args);
-    app.loadApplication(1);
+    const auto collectedGames{app.getAllApplications()};
+
+    for (const auto& game : collectedGames) {
+        const std::filesystem::path& gamePath{game.path};
+        if (gamePath.extension() == "nsp") {
+            app.loadApplication(game.associatedId);
+        }
+    }
 
     app.halt();
     return {};

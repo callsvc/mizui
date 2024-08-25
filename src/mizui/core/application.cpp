@@ -30,12 +30,12 @@ namespace mizui::core {
         sw.stockEveryExecutable(executables);
     }
 
-    void Application::loadApplication(const u64 playId) {
+    bool Application::loadApplication(const u64 application) {
         auto playIt{std::begin(sw.playable)};
-        std::advance(playIt, playId);
+        std::advance(playIt, application);
 
         if (playIt == sw.playable.end())
-            return;
+            return {};
 
         const std::filesystem::path& path{playIt->ios};
         std::fstream io{path};
@@ -46,7 +46,18 @@ namespace mizui::core {
             std::string_view::npos) {
             if (!sw.loadNso(std::move(io)))
                 throw std::runtime_error("Failed to load NSO");
+            return true;
         }
+        return {};
+    }
+
+    std::vector<LoadableApplication> Application::getAllApplications() {
+        std::vector<LoadableApplication> applications;
+
+        for (const auto& playable : sw.playable) {
+            applications.emplace_back(playable.title, playable.ios, playable.playId);
+        }
+        return applications;
     }
 
     void Application::halt() {
