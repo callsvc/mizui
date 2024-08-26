@@ -1,6 +1,8 @@
 #pragma once
-#include <exe/executable.h>
+#include <memory>
 
+#include <exe/executable.h>
+#include <orizonti/fs/partition_filesystem.h>
 namespace mizui::exe {
     struct NspHeader {
         u32 magic;
@@ -14,11 +16,12 @@ namespace mizui::exe {
 
         ExecutableFormat checkExecutableType() override;
         void loadExecutable() override;
-    protected:
+
+    private:
+        std::unique_ptr<orizonti::fs::PartitionFilesystem> pfs;
+
         void readSegmentImpl(std::span<u8> section, u32 fileOffset, u32 compressed, bool isCompressed,
             bool checkHash) override;
-
-    public:
         NspHeader header;
     };
 }

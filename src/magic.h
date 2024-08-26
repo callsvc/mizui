@@ -5,7 +5,7 @@
 
 #include <decl.h>
 namespace mizui {
-    auto makeMagic(const std::string_view& number) {
+    inline auto makeMagic(const std::string_view& number) {
         u64 value{};
         constexpr u32 zeroes{4};
         if (number.size() <= 4) {

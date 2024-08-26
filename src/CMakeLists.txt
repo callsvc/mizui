@@ -35,6 +35,8 @@ target_sources(mizui PUBLIC
     vfs/mappable.cpp
     vfs/mappable.h
     vfs/path.h
+    vfs/rofs.cpp
+    vfs/rofs.h
 )
 
 add_subdirectory(orizonti)

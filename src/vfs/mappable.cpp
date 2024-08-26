@@ -5,6 +5,7 @@
 
 #include <cstring>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include <vfs/mappable.h>
 namespace mizui::vfs {
@@ -66,5 +67,14 @@ namespace mizui::vfs {
             buffPos += result;
         } while (buffPos < output.size());
         return buffPos;
+    }
+
+    u64 Mappable::size() const {
+        struct stat64 ios;
+        const auto result{fstat64(descriptor, &ios)};
+        if (result != 0)
+            return u64{};
+
+        return ios.st_size;
     }
 }

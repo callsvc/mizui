@@ -9,6 +9,8 @@ add_library(orizonti STATIC)
 
 target_sources(orizonti PUBLIC
     kernel/process.h
+    fs/partition_filesystem.cpp
+    fs/partition_filesystem.h
     os.cpp
     os.h
 )
