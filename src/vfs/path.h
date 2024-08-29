@@ -7,7 +7,12 @@ namespace mizui::vfs {
     public:
         Path() = default;
         Path(const std::string& path) :
-            osPath(path) {}
+            osPath(path) {
+            if (osPath.has_root_path()) {
+                if (!exists(osPath)) {
+                }
+            }
+        }
         Path(const std::filesystem::path& path) : osPath(path) {}
         explicit operator std::string() const {
             return osPath;

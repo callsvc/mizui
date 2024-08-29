@@ -5,7 +5,16 @@
 #include <exe/nso.h>
 #include <exe/nsp.h>
 #include <hle/virtual_nx.h>
+
+#include <core/assets_manager.h>
 namespace mizui::hle {
+    VirtualNx::VirtualNx(const core::AssetsManager& assets) {
+        const auto& executables{assets.collection.readable};
+        stockEveryExecutable(executables);
+
+        keysDb.initialize(assets.keys);
+    }
+
     void VirtualNx::stockEveryExecutable(const std::vector<vfs::Path>& executables) {
         for (const auto& [idx, path] : std::views::enumerate(executables)) {
             const std::filesystem::path& local{path};
@@ -33,7 +42,7 @@ namespace mizui::hle {
         auto loadProgram = [&] -> std::unique_ptr<exe::Executable> {
             if (format == exe::ExecutableFormat::Nso)
                 return std::make_unique<exe::Nso>(std::move(handle));
-            return std::make_unique<exe::Nsp>(std::move(handle));
+            return std::make_unique<exe::Nsp>(keysDb, std::move(handle));
         };
 
         program = loadProgram();

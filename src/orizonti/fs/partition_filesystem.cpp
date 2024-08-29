@@ -2,11 +2,10 @@
 #include <vector>
 
 #include <orizonti/fs/partition_filesystem.h>
-#include <magic.h>
+#include <common/magic.h>
 namespace orizonti::fs {
     PartitionFilesystem::PartitionFilesystem(vfs::Mappable& placeable) : backing(placeable) {
-        if (!backing.readSome(header))
-            throw std::runtime_error("Incorrect size of backing");
+        header = backing.readSome<PartitionHeader>();
 
         isHfs = header.magic == makeMagic("HFS0");
         const auto entrySize{isHfs ? sizeof(Hfs0Entry) : sizeof(Pfs0Entry)};
@@ -18,7 +17,7 @@ namespace orizonti::fs {
         const auto contentOffset{stringsOffset + header.strTableSize};
 
         std::vector<u8> content(superBlockSize);
-        if (backing.readSome(content) != superBlockSize)
+        if (backing.readSome(std::span(content)) != superBlockSize)
             throw std::runtime_error("Incorrect size of backing");
 
         if (!header.countOfEntries) {
@@ -40,11 +39,11 @@ namespace orizonti::fs {
         }
     }
 
-    std::vector<vfs::RoRangedFile> PartitionFilesystem::getFiles() {
-        std::vector<vfs::RoRangedFile> files;
+    std::vector<vfs::RoFile> PartitionFilesystem::getFiles() {
+        std::vector<vfs::RoFile> files;
         files.reserve(availableFiles.size());
         for (const auto& fsEntry : availableFiles) {
-            files.emplace_back(fsEntry.offset, fsEntry.size, backing);
+            files.emplace_back(fsEntry.filename, fsEntry.offset, fsEntry.size, backing);
         }
         return files;
     }

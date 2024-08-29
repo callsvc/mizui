@@ -1,5 +1,5 @@
 #include <core/application.h>
-#include <decl.h>
+#include <common/decl.h>
 int main(const mizui::i32 argc, char** argv) {
     mizui::core::Application app;
 

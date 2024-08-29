@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <common/magic.h>
 #include <core/application.h>
 namespace mizui::core {
     po::options_description commands{"Mizui options"};
@@ -26,40 +27,37 @@ namespace mizui::core {
         config = conf::Global(rootDir / "mizui.yaml");
         assets.initialize(rootDir);
 
-        const auto& executables{assets.collection.readable};
-        sw.stockEveryExecutable(executables);
+        device = hle::VirtualNx(assets);
     }
 
     bool Application::loadApplication(const u64 application) {
-        auto playIt{std::begin(sw.playable)};
+        auto playIt{std::begin(device.playable)};
         std::advance(playIt, application);
 
-        if (playIt == sw.playable.end())
+        if (playIt == device.playable.end())
             return {};
 
         const std::filesystem::path& path{playIt->ios};
         std::fstream io{path};
-        std::vector<char> version(6);
-        io.read(&version[0], version.size());
+        vfs::Mappable game{io};
 
-        if (std::string_view(&version[0], 6).find("NSO") !=
-            std::string_view::npos) {
-            sw.loadExecutable(exe::ExecutableFormat::Nso, std::move(io));
-            return true;
-        }
-        if (std::string_view(&version[0], 6).find("PFS0") !=
-            std::string_view::npos) {
-            sw.loadExecutable(exe::ExecutableFormat::Nsp, std::move(io));
-
-            return true;
-        }
-        return {};
+        const auto format = [&] {
+            const auto version{game.readSome<u32>()};
+            if (version == makeMagic("NSO0")) {
+                return exe::ExecutableFormat::Nso;
+            }
+            if (version == makeMagic("PFS0")) {
+                return exe::ExecutableFormat::Nsp;
+            }
+            return exe::ExecutableFormat::Unrecognized;
+        }();
+        return device.loadExecutable(format, std::move(io));
     }
 
     std::vector<LoadableApplication> Application::getAllApplications() {
         std::vector<LoadableApplication> applications;
 
-        for (const auto& playable : sw.playable) {
+        for (const auto& playable : device.playable) {
             applications.emplace_back(playable.title, playable.ios, playable.playId);
         }
         return applications;

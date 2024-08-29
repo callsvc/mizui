@@ -41,7 +41,7 @@ namespace orizonti::fs {
     class PartitionFilesystem final : vfs::RoFs {
     public:
         PartitionFilesystem(vfs::Mappable& placeable);
-        std::vector<vfs::RoRangedFile> getFiles() override;
+        std::vector<vfs::RoFile> getFiles() override;
     private:
         vfs::Mappable& backing;
         PartitionHeader header;

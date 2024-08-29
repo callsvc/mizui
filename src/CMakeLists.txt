@@ -11,14 +11,17 @@ target_link_libraries(mizui_interface PUBLIC INTERFACE fmt::fmt lz4_static)
 add_subdirectory(app)
 
 target_sources(mizui PUBLIC
-    decl.h
-    magic.h
+    common/decl.h
+    common/magic.h
+    common/modifiers.h
     core/application.cpp
     core/application.h
     core/assets_manager.cpp
     core/assets_manager.h
     core/games_paths.cpp
     core/games_paths.h
+    crypt/platform_keys.cpp
+    crypt/platform_keys.h
     hle/virtual_nx.cpp
     hle/virtual_nx.h
     hle/application.h
@@ -32,6 +35,7 @@ target_sources(mizui PUBLIC
     conf/global.h
     conf/yaml.cpp
     conf/yaml.h
+    vfs/ranged.h
     vfs/mappable.cpp
     vfs/mappable.h
     vfs/path.h

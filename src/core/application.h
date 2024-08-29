@@ -25,6 +25,6 @@ namespace mizui::core {
         void processOptions(const std::vector<char*>& args);
         conf::Global config;
 
-        hle::VirtualNx sw;
+        hle::VirtualNx device;
     };
 }

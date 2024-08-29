@@ -4,15 +4,13 @@
 #include <vfs/mappable.h>
 #include <vfs/path.h>
 namespace mizui::vfs {
-    class RoRangedFile {
+    class RoFile final : public Ranged {
     public:
-        RoRangedFile(u64 readOff, u64 readSize, Mappable& readOnly);
-    private:
+        RoFile(const Path& filename, const u64 offset, const u64 virSize, Mappable& ro) : Ranged(Read, virSize, offset), name(filename), support(ro) {}
+        explicit operator bool() const override;
         Path name;
-        std::vector<u8> content;
-
-        u64 offset;
-        u64 size;
+    private:
+        u64 readSomeImpl(std::span<u8> output, u64 offset) override;
         Mappable& support;
     };
 
@@ -20,6 +18,6 @@ namespace mizui::vfs {
     public:
         virtual ~RoFs() = default;
     protected:
-        virtual std::vector<RoRangedFile> getFiles() = 0;
+        virtual std::vector<RoFile> getFiles() = 0;
     };
 }

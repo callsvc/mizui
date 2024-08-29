@@ -1,10 +1,10 @@
 #include <exe/nsp.h>
 
-#include <magic.h>
+#include <common/magic.h>
+#include <orizonti/es/title_ticket.h>
 namespace mizui::exe {
     ExecutableFormat Nsp::checkExecutableType() {
-        u32 magic;
-        backing.readSome(magic);
+        const auto magic{backing.readSome<u32>()};
         if (backing.size() < sizeof(magic))
             return ExecutableFormat::Unrecognized;
         if (magic != makeMagic("HFS0") ||
@@ -13,13 +13,29 @@ namespace mizui::exe {
 
         return ExecutableFormat::Nsp;
     }
-    Nsp::Nsp(std::fstream&& os) :
+    Nsp::Nsp(crypt::PlatformKeys& set, std::fstream&& os) :
         Executable(std::move(os)),
         pfs(std::make_unique<orizonti::fs::PartitionFilesystem>(backing)) {
 
-        [[maybe_unused]] auto nspFiles{pfs->getFiles()};
+        nspFiles = pfs->getFiles();
+        if (!nspFiles.empty())
+            readTickets(set);
 
-        backing.readSome(header);
+        header = backing.readSome<NspHeader>();
+    }
+    void Nsp::readTickets(crypt::PlatformKeys& set) {
+        for (const auto& entry : nspFiles) {
+            const std::filesystem::path& ioName{entry.name};
+            if (ioName.extension() != ".tik")
+                continue;
+
+            vfs::RoFile file{entry};
+            orizonti::crypt::Ticket ticket{file};
+
+            crypt::Key128 value;
+            std::memcpy(&value[0], &ticket.titleKeyBlock[0], sizeof(value));
+            set.addTitleKey(ticket.rights, value);
+        }
     }
 
     void Nsp::loadExecutable() {

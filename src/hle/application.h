@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <decl.h>
+#include <common/decl.h>
 #include <vfs/path.h>
 namespace mizui::hle {
     struct Application {

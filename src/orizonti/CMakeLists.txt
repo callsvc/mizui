@@ -11,6 +11,8 @@ target_sources(orizonti PUBLIC
     kernel/process.h
     fs/partition_filesystem.cpp
     fs/partition_filesystem.h
+    es/title_ticket.cpp
+    es/title_ticket.h
     os.cpp
     os.h
 )

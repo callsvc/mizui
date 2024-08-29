@@ -6,13 +6,11 @@
 #include <fmt/format.h>
 #include <lz4.h>
 
-#include <magic.h>
+#include <common/magic.h>
 #include <exe/nso.h>
 namespace mizui::exe {
     ExecutableFormat Nso::checkExecutableType() {
-        u32 magic{};
-        if (backing.readSome(magic) != sizeof(magic))
-            return ExecutableFormat::Unrecognized;
+        const auto magic{backing.readSome<u32>()};
         if (magic != makeMagic("NSO0")) {
             return ExecutableFormat::Unrecognized;
         }
@@ -105,7 +103,7 @@ namespace mizui::exe {
     }
 
     void Nso::loadExecutable() {
-        backing.readSome(header);
+        header = backing.readSome<NsoHeader>();
         if (header.version != 0) {
             throw std::runtime_error("Unknown version");
         }

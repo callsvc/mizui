@@ -3,7 +3,7 @@
 #include <cstring>
 #include <string_view>
 
-#include <decl.h>
+#include <common/decl.h>
 namespace mizui {
     inline auto makeMagic(const std::string_view& number) {
         u64 value{};
