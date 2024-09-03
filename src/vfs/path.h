@@ -23,6 +23,9 @@ namespace mizui::vfs {
         Path operator / (const std::string& path) const {
             return Path{osPath.string() + "/" + path};
         }
+        auto operator ==(const std::string& path) const {
+            return osPath == path;
+        }
         explicit operator bool() const {
             return !osPath.empty();
         }

@@ -18,6 +18,12 @@ namespace mizui::exe {
         pfs(std::make_unique<orizonti::fs::PartitionFilesystem>(backing)) {
 
         nspFiles = pfs->getFiles();
+        const auto main{pfs->open("main")};
+        const auto npdm{pfs->open("main.npdm")};
+        if (!(main && npdm)) {
+
+        }
+
         if (!nspFiles.empty())
             readTickets(set);
 

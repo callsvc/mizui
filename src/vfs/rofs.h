@@ -6,7 +6,7 @@
 namespace mizui::vfs {
     class RoFile final : public Ranged {
     public:
-        RoFile(const Path& filename, const u64 offset, const u64 virSize, Mappable& ro) : Ranged(Read, virSize, offset), name(filename), support(ro) {}
+        RoFile(const Path& filename, const u64 offset, const u64 virSize, Mappable& ro) : Ranged(virSize, offset), name(filename), support(ro) {}
         explicit operator bool() const override;
         Path name;
     private:
@@ -19,5 +19,6 @@ namespace mizui::vfs {
         virtual ~RoFs() = default;
     protected:
         virtual std::vector<RoFile> getFiles() = 0;
+        virtual std::optional<RoFile> open(const std::string& filename) = 0;
     };
 }

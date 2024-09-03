@@ -2,15 +2,51 @@
 #include <vector>
 
 #include <orizonti/fs/partition_filesystem.h>
+#include <orizonti/fs/packaged_meta.h>
+
 #include <common/magic.h>
+#define PFS_SUPPORT_HFS 1
 namespace orizonti::fs {
     PartitionFilesystem::PartitionFilesystem(vfs::Mappable& placeable) : backing(placeable) {
         header = backing.readSome<PartitionHeader>();
 
-        isHfs = header.magic == makeMagic("HFS0");
-        const auto entrySize{isHfs ? sizeof(Hfs0Entry) : sizeof(Pfs0Entry)};
-        if (isHfs)
+        if (header.magic == makeMagic("HFS0"))
+            isHfs = true;
+#if !PFS_SUPPORT_HFS
+        if (isHfs) {
             throw std::runtime_error("HFS is not supported for now");
+        }
+#endif
+        readEntries();
+
+        for (auto& contentFile : getFiles()) {
+            const std::string contentStrPath{contentFile.name};
+            if (!contentStrPath.ends_with(".cnmt.nca"))
+                continue;
+
+            [[maybe_unused]] PackageMeta meta{contentFile};
+        }
+    }
+
+    std::vector<vfs::RoFile> PartitionFilesystem::getFiles() {
+        std::vector<vfs::RoFile> files;
+        files.reserve(availableFiles.size());
+        for (const auto& fsEntry : availableFiles) {
+            files.emplace_back(fsEntry.filename, fsEntry.offset, fsEntry.size, backing);
+        }
+        return files;
+    }
+    std::optional<vfs::RoFile> PartitionFilesystem::open(const std::string &filename) {
+        for (auto& fixedEntry : availableFiles) {
+            if (fixedEntry.filename == filename) {
+                return vfs::RoFile{fixedEntry.filename, fixedEntry.offset, fixedEntry.size, backing};
+            }
+        }
+        return {};
+    }
+
+    void PartitionFilesystem::readEntries() {
+        const auto entrySize{isHfs ? sizeof(Hfs0Entry) : sizeof(Pfs0Entry)};
 
         const auto superBlockSize{sizeof(header) + header.countOfEntries * entrySize + header.strTableSize};
         const auto stringsOffset{superBlockSize - header.strTableSize};
@@ -37,14 +73,5 @@ namespace orizonti::fs {
 
             availableFiles.emplace_back(std::move(name), contentOffset + entryHead.offset, entryHead.size);
         }
-    }
-
-    std::vector<vfs::RoFile> PartitionFilesystem::getFiles() {
-        std::vector<vfs::RoFile> files;
-        files.reserve(availableFiles.size());
-        for (const auto& fsEntry : availableFiles) {
-            files.emplace_back(fsEntry.filename, fsEntry.offset, fsEntry.size, backing);
-        }
-        return files;
     }
 }

@@ -42,10 +42,13 @@ namespace orizonti::fs {
     public:
         PartitionFilesystem(vfs::Mappable& placeable);
         std::vector<vfs::RoFile> getFiles() override;
+        std::optional<vfs::RoFile> open(const std::string& filename) override;
     private:
+        void readEntries();
+
         vfs::Mappable& backing;
         PartitionHeader header;
-        bool isHfs;
+        bool isHfs{};
         std::vector<PfFile> availableFiles;
     };
 };

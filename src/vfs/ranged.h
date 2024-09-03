@@ -1,3 +1,4 @@
+// ReSharper disable CppLocalVariableMayBeConst
 #pragma once
 #include <span>
 
@@ -5,12 +6,12 @@
 namespace mizui::vfs {
     enum RangedAccess {
         Read,
-        Write
+        Write,
     };
     class Ranged {
     public:
         virtual ~Ranged() = default;
-        Ranged(const RangedAccess ioMode = Read, const u64 sz = {}, const u64 rPos = {}, const u64 wPos = {}) : mode(ioMode), size(sz), readPos(rPos), writePos(wPos) {}
+        Ranged(const u64 sz = {}, const u64 rPos = {}, const u64 wPos = {}, const RangedAccess ioMode = Read) : mode(ioMode), size(sz), readPos(rPos), writePos(wPos) {}
 
         template <typename T> requires (!std::is_same_v<T, std::span<u8>>)
         auto readSome(std::span<T> output, const u64 offset) {
@@ -23,14 +24,12 @@ namespace mizui::vfs {
 
         template <typename T> requires (!std::is_same_v<T, std::span<u8>> && std::is_trivially_copyable_v<T>)
         auto readSome(T& output, const u64 offset) {
-            // ReSharper disable once CppLocalVariableMayBeConst
             std::span data{reinterpret_cast<u8*>(&output), sizeof(T)};
             return readSomeImpl(data, offset);
         }
         template <typename T> requires (!std::is_same_v<T, std::span<u8>> && std::is_trivially_copyable_v<T>)
         auto readSome(const u64 offset) {
             T object;
-            // ReSharper disable once CppLocalVariableMayBeConst
             std::span data{reinterpret_cast<u8*>(&object), sizeof(T)};
             readSomeImpl(data, offset);
             return object;
