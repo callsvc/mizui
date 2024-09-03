@@ -1,3 +1,4 @@
+// ReSharper disable All
 #pragma once
 #include <span>
 

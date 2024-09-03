@@ -1,12 +1,11 @@
+#include <vfs/nca.h>
 #include <exe/nsp_partition.h>
-#include <exe/nca.h>
-
 namespace mizui::exe {
-    NspPartition::NspPartition(vfs::Mappable& nsp) :
-        pfs(std::make_unique<orizonti::fs::PartitionFilesystem>(nsp)) {
+    NspPartition::NspPartition(crypt::PlatformKeys& set, vfs::Mappable& nsp) :
+        pfs(std::make_unique<orizonti::fs::PartitionFilesystem>(nsp)),
+        keys(set) {
 
         nspFiles = pfs->getFiles();
-        readNcaEntries();
 
         const auto main{pfs->open("main")};
         const auto npdm{pfs->open("main.npdm")};
@@ -19,7 +18,7 @@ namespace mizui::exe {
 
     void NspPartition::readNcaEntries() const {
         for (auto& meta : pfs->cachedMeta) {
-            [[maybe_unused]] Nca metaNca{meta};
+            [[maybe_unused]] Nca metaNca{keys, meta};
         }
     }
 }

@@ -20,6 +20,8 @@ namespace mizui::crypt {
         void addTitleKey(const std::string_view& alias, const std::string_view& value);
         void addTitleKey(Key128& alias, Key128& value);
         void addProdKey(const std::string_view& alias, const std::string_view& value);
+
+        std::optional<Key256> headerKey;
     private:
         std::vector<std::pair<std::string_view, Key256>> keys256Names;
 

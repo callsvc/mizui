@@ -19,12 +19,12 @@ namespace mizui::exe {
         ExecutableFormat checkExecutableType() override;
         void loadExecutable() override;
     private:
-        void readTickets(crypt::PlatformKeys& set);
+        void readTickets(crypt::PlatformKeys& set) const;
 
         void readSegmentImpl(std::span<u8> section, u32 fileOffset, u32 compressed, bool isCompressed,
             bool checkHash) override;
 
-        NspPartition nspFs;
         NspHeader header;
+        std::unique_ptr<NspPartition> nspFs;
     };
 }

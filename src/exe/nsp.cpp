@@ -15,14 +15,15 @@ namespace mizui::exe {
     }
     Nsp::Nsp(crypt::PlatformKeys& set, std::fstream&& os) :
         Executable(std::move(os)),
-        nspFs(backing) {
+        nspFs(std::make_unique<NspPartition>(set, backing)) {
 
-        const auto files{nspFs.nspFiles};
+        const auto files{nspFs->nspFiles};
         if (!files.empty())
             readTickets(set);
+        nspFs->readNcaEntries();
     }
-    void Nsp::readTickets(crypt::PlatformKeys& set) {
-        for (const auto& entry : nspFs.nspFiles) {
+    void Nsp::readTickets(crypt::PlatformKeys& set) const {
+        for (const auto& entry : nspFs->nspFiles) {
             const std::filesystem::path& ioName{entry.name};
             if (ioName.extension() != ".tik")
                 continue;

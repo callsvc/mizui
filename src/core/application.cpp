@@ -24,7 +24,7 @@ namespace mizui::core {
         if (!exists(root)) {
             create_directory(root);
         }
-        config = conf::Global(rootDir / "mizui.yaml");
+        config = config::Global(rootDir / "mizui.yaml");
         assets.initialize(rootDir);
 
         device = hle::VirtualNx(assets);

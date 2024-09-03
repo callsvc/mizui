@@ -25,7 +25,7 @@ namespace orizonti::crypt {
 
         *this = ticketIo.readSome<Ticket>(offset);
         if (titleKeyType)
-            if (titleKeyType == 1 && (signType != 0x010001 && signType != 0x010004))
+            if (titleKeyType == 1 && (signType != Rsa2048Sha1 && signType != Rsa2048Sha2))
                 throw std::runtime_error("Bad title key type");
 
         std::print("Retail cert name: {}\n", std::string_view{&issuer[0]});

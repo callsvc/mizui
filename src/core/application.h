@@ -3,7 +3,7 @@
 
 #include <core/assets_manager.h>
 #include <hle/virtual_nx.h>
-#include <conf/global.h>
+#include <config/global.h>
 namespace mizui::core {
     namespace po = boost::program_options;
     struct LoadableApplication {
@@ -23,7 +23,7 @@ namespace mizui::core {
         static void halt();
     private:
         void processOptions(const std::vector<char*>& args);
-        conf::Global config;
+        config::Global config;
 
         hle::VirtualNx device;
     };

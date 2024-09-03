@@ -1,8 +1,8 @@
 #include <regex>
 #include <boost/algorithm/string.hpp>
 
-#include <conf/yaml.h>
-namespace mizui::conf {
+#include <config/yaml.h>
+namespace mizui::config {
     Yaml::Yaml(std::fstream& yaml) {
         std::vector<char> buffer(256);
         yaml.seekg(std::ios::beg);

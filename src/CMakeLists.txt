@@ -22,6 +22,8 @@ target_sources(mizui PUBLIC
     core/games_paths.h
     crypt/platform_keys.cpp
     crypt/platform_keys.h
+    crypt/aes_decrypt.cpp
+    crypt/aes_decrypt.h
     hle/virtual_nx.cpp
     hle/virtual_nx.h
     hle/application.h
@@ -33,12 +35,12 @@ target_sources(mizui PUBLIC
     exe/nsp.h
     exe/nsp_partition.cpp
     exe/nsp_partition.h
-    exe/nca.cpp
-    exe/nca.h
-    conf/global.cpp
-    conf/global.h
-    conf/yaml.cpp
-    conf/yaml.h
+    config/global.cpp
+    config/global.h
+    config/yaml.cpp
+    config/yaml.h
+    vfs/nca.cpp
+    vfs/nca.h
     vfs/support.h
     vfs/mappable.cpp
     vfs/mappable.h
@@ -48,4 +50,4 @@ target_sources(mizui PUBLIC
 )
 
 add_subdirectory(orizonti)
-target_link_libraries(mizui PUBLIC mizui_interface orizonti Boost::program_options Boost::algorithm)
+target_link_libraries(mizui PUBLIC mizui_interface orizonti Boost::program_options Boost::algorithm mbedcrypto)

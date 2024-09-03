@@ -49,7 +49,12 @@ namespace mizui::crypt {
         for (; begin != end; ++begin) {
             if (begin->first != taggedKey)
                 continue;
-            begin->second = viewToByteArray<32>(value);
+            const auto key{viewToByteArray<32>(value)};
+            // We will routinely use the title key, so let's copy it separately
+            if (taggedKey == begin->first) {
+                headerKey = key;
+            }
+            begin->second = key;
             break;
         }
     }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vfs/path.h>
-#include <conf/yaml.h>
-namespace mizui::conf {
+#include <config/yaml.h>
+namespace mizui::config {
     class Global {
     public:
         Global() = default;

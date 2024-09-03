@@ -7,13 +7,15 @@ namespace mizui::vfs {
     class ReadOnlyFile final : public Support {
     public:
         ReadOnlyFile(const Path& filename, const u64 off, const u64 sz, Mappable& ro) :
-            name(filename), offset(off), size(sz), backing(ro) {
+            name(filename),
+            backing(ro) {
+
+            readPos = off;
+            size = sz;
         }
         explicit operator bool() const override;
         Path name;
     private:
-        u64 offset;
-        u64 size;
         Mappable& backing;
         u64 readSomeImpl(std::span<u8> output, u64 offset) override;
     };
