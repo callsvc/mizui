@@ -21,7 +21,7 @@ namespace orizonti::crypt {
 
     struct Ticket {
         Ticket() = default;
-        Ticket(vfs::RoFile& ticketIo);
+        Ticket(vfs::Support& ticketIo);
 
         std::array<char, 0x40> issuer;
         std::array<u8, 0x100> titleKeyBlock;

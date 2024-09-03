@@ -3,7 +3,7 @@
 #include <boost/align/align_up.hpp>
 #include <orizonti/es/title_ticket.h>
 namespace orizonti::crypt {
-    Ticket::Ticket(vfs::RoFile& ticketIo) {
+    Ticket::Ticket(vfs::Support& ticketIo) {
         const auto signType{ticketIo.readSome<SignatureType>()};
 
         u64 offset{};

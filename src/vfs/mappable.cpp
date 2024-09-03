@@ -11,7 +11,6 @@ namespace mizui::vfs {
     Mappable::Mappable(std::fstream& io) {
         io.seekg(0, std::ios::beg);
 
-        io.seekg(0, std::ios::beg);
         std::vector<char> testBytes(100);
         std::vector<char> srcBytes(100);
         io.read(&testBytes[0], testBytes.size());
@@ -39,6 +38,7 @@ namespace mizui::vfs {
             descriptor = target;
             break;
         }
+        size = getSize();
     }
 
     Mappable::operator bool() const {
@@ -64,7 +64,7 @@ namespace mizui::vfs {
         return buffPos;
     }
 
-    u64 Mappable::size() const {
+    u64 Mappable::getSize() const {
         struct stat64 ios;
         const auto result{fstat64(descriptor, &ios)};
         if (result != 0)

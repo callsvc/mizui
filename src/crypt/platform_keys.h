@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <vfs/path.h>
+#include <common/decl.h>
 namespace mizui::crypt {
     using Key128 = std::array<u8, 16>;
     using Key256 = std::array<u8, 32>;

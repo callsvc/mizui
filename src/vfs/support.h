@@ -4,14 +4,14 @@
 
 #include <common/decl.h>
 namespace mizui::vfs {
-    enum RangedAccess {
+    enum SupportAccess {
         Read,
         Write,
     };
-    class Ranged {
+    class Support {
     public:
-        virtual ~Ranged() = default;
-        Ranged(const u64 sz = {}, const u64 rPos = {}, const u64 wPos = {}, const RangedAccess ioMode = Read) : mode(ioMode), size(sz), readPos(rPos), writePos(wPos) {}
+        virtual ~Support() = default;
+        Support(const u64 sz = {}, const u64 rPos = {}, const u64 wPos = {}, const SupportAccess ioMode = Read) : mode(ioMode), size(sz), readPos(rPos), writePos(wPos) {}
 
         template <typename T> requires (!std::is_same_v<T, std::span<u8>>)
         auto readSome(std::span<T> output, const u64 offset) {
@@ -46,7 +46,7 @@ namespace mizui::vfs {
     protected:
         virtual u64 readSomeImpl(std::span<u8> output, u64 offset = {}) = 0;
 
-        RangedAccess mode;
+        SupportAccess mode;
         u64 size;
 
         u64 readPos;

@@ -31,11 +31,15 @@ target_sources(mizui PUBLIC
     exe/nso.h
     exe/nsp.cpp
     exe/nsp.h
+    exe/nsp_partition.cpp
+    exe/nsp_partition.h
+    exe/nca.cpp
+    exe/nca.h
     conf/global.cpp
     conf/global.h
     conf/yaml.cpp
     conf/yaml.h
-    vfs/ranged.h
+    vfs/support.h
     vfs/mappable.cpp
     vfs/mappable.h
     vfs/path.h

@@ -2,12 +2,10 @@
 #include <vector>
 
 #include <orizonti/fs/partition_filesystem.h>
-#include <orizonti/fs/packaged_meta.h>
-
 #include <common/magic.h>
 #define PFS_SUPPORT_HFS 1
 namespace orizonti::fs {
-    PartitionFilesystem::PartitionFilesystem(vfs::Mappable& placeable) : backing(placeable) {
+    PartitionFilesystem::PartitionFilesystem(vfs::Support& placeable) : backing(placeable) {
         header = backing.readSome<PartitionHeader>();
 
         if (header.magic == makeMagic("HFS0"))
@@ -21,25 +19,25 @@ namespace orizonti::fs {
 
         for (auto& contentFile : getFiles()) {
             const std::string contentStrPath{contentFile.name};
-            if (!contentStrPath.ends_with(".cnmt.nca"))
+            if (!contentStrPath.ends_with(".cnmt.nca") &&
+                !contentStrPath.ends_with("meta0.ncd"))
                 continue;
-
-            [[maybe_unused]] PackageMeta meta{contentFile};
+            cachedMeta.emplace_back(contentFile);
         }
     }
 
-    std::vector<vfs::RoFile> PartitionFilesystem::getFiles() {
-        std::vector<vfs::RoFile> files;
+    std::vector<vfs::ReadOnlyFile> PartitionFilesystem::getFiles() {
+        std::vector<vfs::ReadOnlyFile> files;
         files.reserve(availableFiles.size());
         for (const auto& fsEntry : availableFiles) {
             files.emplace_back(fsEntry.filename, fsEntry.offset, fsEntry.size, backing);
         }
         return files;
     }
-    std::optional<vfs::RoFile> PartitionFilesystem::open(const std::string &filename) {
+    std::optional<vfs::ReadOnlyFile> PartitionFilesystem::open(const std::string& filename) {
         for (auto& fixedEntry : availableFiles) {
             if (fixedEntry.filename == filename) {
-                return vfs::RoFile{fixedEntry.filename, fixedEntry.offset, fixedEntry.size, backing};
+                return vfs::ReadOnlyFile{fixedEntry.filename, fixedEntry.offset, fixedEntry.size, backing};
             }
         }
         return {};

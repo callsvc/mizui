@@ -5,7 +5,7 @@
 namespace mizui::exe {
     ExecutableFormat Nsp::checkExecutableType() {
         const auto magic{backing.readSome<u32>()};
-        if (backing.size() < sizeof(magic))
+        if (backing.getSize() < sizeof(magic))
             return ExecutableFormat::Unrecognized;
         if (magic != makeMagic("HFS0") ||
             magic != makeMagic("PFS0"))
@@ -15,27 +15,21 @@ namespace mizui::exe {
     }
     Nsp::Nsp(crypt::PlatformKeys& set, std::fstream&& os) :
         Executable(std::move(os)),
-        pfs(std::make_unique<orizonti::fs::PartitionFilesystem>(backing)) {
+        nspFs(backing) {
 
-        nspFiles = pfs->getFiles();
-        const auto main{pfs->open("main")};
-        const auto npdm{pfs->open("main.npdm")};
-        if (!(main && npdm)) {
-
-        }
-
-        if (!nspFiles.empty())
+        const auto files{nspFs.nspFiles};
+        if (!files.empty())
             readTickets(set);
 
         header = backing.readSome<NspHeader>();
     }
     void Nsp::readTickets(crypt::PlatformKeys& set) {
-        for (const auto& entry : nspFiles) {
+        for (const auto& entry : nspFs.nspFiles) {
             const std::filesystem::path& ioName{entry.name};
             if (ioName.extension() != ".tik")
                 continue;
 
-            vfs::RoFile file{entry};
+            vfs::ReadOnlyFile file{entry};
             orizonti::crypt::Ticket ticket{file};
 
             crypt::Key128 value;

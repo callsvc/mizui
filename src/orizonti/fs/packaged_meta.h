@@ -30,7 +30,7 @@ namespace orizonti::fs {
 #pragma pack(pop)
     class PackageMeta {
         public:
-        PackageMeta(vfs::RoFile& cnmt);
+        PackageMeta(vfs::Support& cnmt);
 
     private:
         ContentHeader cnmtHeader;

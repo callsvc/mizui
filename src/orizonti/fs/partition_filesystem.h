@@ -40,13 +40,15 @@ namespace orizonti::fs {
 
     class PartitionFilesystem final : vfs::RoFs {
     public:
-        PartitionFilesystem(vfs::Mappable& placeable);
-        std::vector<vfs::RoFile> getFiles() override;
-        std::optional<vfs::RoFile> open(const std::string& filename) override;
+        PartitionFilesystem(vfs::Support& placeable);
+        std::vector<vfs::ReadOnlyFile> getFiles() override;
+        std::optional<vfs::ReadOnlyFile> open(const std::string& filename) override;
+
+        std::vector<vfs::ReadOnlyFile> cachedMeta;
     private:
         void readEntries();
 
-        vfs::Mappable& backing;
+        vfs::Support& backing;
         PartitionHeader header;
         bool isHfs{};
         std::vector<PfFile> availableFiles;
