@@ -20,8 +20,6 @@ namespace mizui::exe {
         const auto files{nspFs.nspFiles};
         if (!files.empty())
             readTickets(set);
-
-        header = backing.readSome<NspHeader>();
     }
     void Nsp::readTickets(crypt::PlatformKeys& set) {
         for (const auto& entry : nspFs.nspFiles) {

@@ -7,7 +7,7 @@ namespace mizui::vfs {
                 return {};
             readPos += offset;
         }
-        const auto result{readSome(output, readPos)};
+        const auto result{backing.readSome(output, readPos)};
         if (result != size) {
         }
         return result;

@@ -1,4 +1,3 @@
-// ReSharper disable CppLocalVariableMayBeConst
 #pragma once
 #include <span>
 

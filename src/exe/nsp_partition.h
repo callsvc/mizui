@@ -5,7 +5,7 @@
 namespace mizui::exe {
     class NspPartition {
     public:
-        NspPartition(vfs::Support& nsp);
+        NspPartition(vfs::Mappable& nsp);
         std::vector<vfs::ReadOnlyFile> nspFiles;
 
         void readNcaEntries() const;

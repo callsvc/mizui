@@ -5,7 +5,7 @@
 #include <common/magic.h>
 #define PFS_SUPPORT_HFS 1
 namespace orizonti::fs {
-    PartitionFilesystem::PartitionFilesystem(vfs::Support& placeable) : backing(placeable) {
+    PartitionFilesystem::PartitionFilesystem(vfs::Mappable& placeable) : backing(placeable) {
         header = backing.readSome<PartitionHeader>();
 
         if (header.magic == makeMagic("HFS0"))
